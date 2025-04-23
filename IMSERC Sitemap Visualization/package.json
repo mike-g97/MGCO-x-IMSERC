@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://northwestern-imserc.github.io/sitemap",
+  "homepage": "https://mike-g97.github.io/MGCO-x-IMSERC",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

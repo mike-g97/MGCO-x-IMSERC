@@ -6,5 +6,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/sitemap/',
+  base: '/MGCO-x-IMSERC/',
 });
