@@ -14,26 +14,32 @@ interface Connection {
 
 export default function SitemapConnections({ data }: SitemapConnectionsProps) {
   const [connections, setConnections] = useState<Connection[]>([]);
-  const { isNodeExpanded } = useSitemap();
+  const { isNodeExpanded, zoomLevel} = useSitemap();
 
   useEffect(() => {
     const updateConnections = () => {
       const newConnections: Connection[] = [];
+      const container = document.querySelector('.overflow-auto');
+      if (!container) return;
       
+      const containerRect = container.getBoundingClientRect();
+      const scrollLeft = container.scrollLeft;
+      const scrollTop = container.scrollTop;
+
       const processNode = (node: any) => {
         const parentElement = document.querySelector(`[data-node-id="${node.id}"]`);
         
         if (parentElement && node.children && isNodeExpanded(node.id)) {
           const parentRect = parentElement.getBoundingClientRect();
-          const parentX = parentRect.left + parentRect.width / 2;
-          const parentY = parentRect.top + parentRect.height;
+          const parentX = (parentRect.left - containerRect.left + scrollLeft + parentRect.width / 2) / zoomLevel;
+          const parentY = (parentRect.top - containerRect.top + scrollTop + parentRect.height) / zoomLevel;
           
           node.children.forEach((child: any) => {
             const childElement = document.querySelector(`[data-node-id="${child.id}"]`);
             if (childElement) {
               const childRect = childElement.getBoundingClientRect();
-              const childX = childRect.left + childRect.width / 2;
-              const childY = childRect.top;
+              const childX = (childRect.left - containerRect.left + scrollLeft + childRect.width / 2) / zoomLevel;
+              const childY = (childRect.top - containerRect.top + scrollTop) / zoomLevel;
               
               newConnections.push({
                 x1: parentX,
@@ -56,6 +62,12 @@ export default function SitemapConnections({ data }: SitemapConnectionsProps) {
     
     // Initial update
     updateConnections();
+
+    // Update on scroll
+    const container = document.querySelector('.overflow-auto');
+    if (container) {
+      container.addEventListener('scroll', updateConnections);
+    }
     
     // Update on resize
     window.addEventListener('resize', updateConnections);
@@ -72,7 +84,7 @@ export default function SitemapConnections({ data }: SitemapConnectionsProps) {
       window.removeEventListener('resize', updateConnections);
       observer.disconnect();
     };
-  }, [data, isNodeExpanded]);
+  }, [data, isNodeExpanded, zoomLevel]);
 
   return (
     <svg
