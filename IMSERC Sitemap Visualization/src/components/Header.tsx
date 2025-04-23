@@ -1,9 +1,21 @@
 import React from 'react';
 import { Search, ZoomIn, ZoomOut, Download, Menu } from 'lucide-react';
 import { useSitemap } from '../context/SitemapContext';
+import { sitemapData } from '../data/sitemapData';
 
 const Header = () => {
   const { searchQuery, setSearchQuery, zoomIn, zoomOut, resetZoom, zoomLevel } = useSitemap();
+
+  const handleExport = () => {
+    const dataStr = JSON.stringify(sitemapData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'imserc-sitemap.json';
+    document.body.appendChild(link);
+    URL.revokeObjectURL(url);
+  }
   
   return (
     <header className="bg-[#4E2A84] text-white shadow-md">
@@ -51,8 +63,9 @@ const Header = () => {
             </div>
             
             <button 
+              onClick={handleExport}
               className="text-white bg-purple-700 hover:bg-purple-600 rounded-md p-1.5"
-              title="Export sitemap"
+              title="Export sitemap as JSON"
             >
               <Download className="h-4 w-4" />
             </button>
