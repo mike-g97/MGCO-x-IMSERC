@@ -32,6 +32,14 @@ const SitemapNode = ({ node, level }: SitemapNodeProps) => {
   // Calculate left margin based on level
   const marginLeft = level * 40;
   
+  const handleNodeClick = (e: React.MouseEvent) => {
+    // Prevent click from bubbling up to parent elements
+    e.stopPropagation();
+    if (hasChildren) {
+      toggleNodeExpansion(node.id);
+    }
+  };
+
   return (
     <div className="relative">
       <div 
@@ -55,6 +63,7 @@ const SitemapNode = ({ node, level }: SitemapNodeProps) => {
         
         <div 
           data-node-id={node.id}
+          onClick={handleNodeClick}
           className={`
             group relative px-4 py-2 rounded-lg shadow-sm border border-gray-200
             transition-all duration-200 cursor-pointer
@@ -66,10 +75,16 @@ const SitemapNode = ({ node, level }: SitemapNodeProps) => {
             <div>
               <div className="font-medium">{node.title}</div>
               {node.url && (
-                <div className="text-xs opacity-70 flex items-center mt-0.5">
+                <a  
+                  href={`https://imserc.northwestern.edu${node.url}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="text-xs opacity-70 flex items-center mt-0.5 hover:opacity-100"
+                >
                   {level === 0 ? 'Home' : node.url} 
                   <ExternalLink className="ml-1 w-3 h-3" />
-                </div>
+                </a>
               )}
             </div>
           </div>

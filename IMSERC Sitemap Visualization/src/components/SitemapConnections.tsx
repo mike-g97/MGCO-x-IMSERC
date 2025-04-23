@@ -81,6 +81,9 @@ export default function SitemapConnections({ data }: SitemapConnectionsProps) {
     });
     
     return () => {
+      if (container) {
+        container.removeEventListener('scroll', updateConnections);
+      }
       window.removeEventListener('resize', updateConnections);
       observer.disconnect();
     };
